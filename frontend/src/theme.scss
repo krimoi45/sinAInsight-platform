@@ -1,0 +1,263 @@
+@use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+// Palette de couleurs inspirée de Docker Desktop
+$sinai-primary-palette: (
+  50: #e3f2fd,
+  100: #bbdefb,
+  200: #90caf9,
+  300: #64b5f6,
+  400: #42a5f5,
+  500: #0db7ed, // Couleur principale de Docker
+  600: #0288d1,
+  700: #0277bd,
+  800: #01579b,
+  900: #014377,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  )
+);
+
+$sinai-accent-palette: (
+  50: #e8f5e9,
+  100: #c8e6c9,
+  200: #a5d6a7,
+  300: #81c784,
+  400: #66bb6a,
+  500: #4ecca3, // Couleur accent verte
+  600: #43a047,
+  700: #388e3c,
+  800: #2e7d32,
+  900: #1b5e20,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: rgba(0, 0, 0, 0.87),
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  )
+);
+
+$sinai-warn-palette: (
+  50: #ffebee,
+  100: #ffcdd2,
+  200: #ef9a9a,
+  300: #e57373,
+  400: #ef5350,
+  500: #f44336,
+  600: #e53935,
+  700: #d32f2f,
+  800: #c62828,
+  900: #b71c1c,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  )
+);
+
+// Définition des thèmes Angular Material
+$sinai-primary: mat.define-palette($sinai-primary-palette, 500);
+$sinai-accent: mat.define-palette($sinai-accent-palette, 500);
+$sinai-warn: mat.define-palette($sinai-warn-palette, 500);
+
+// Thème clair
+$sinai-light-theme: mat.define-light-theme((
+  color: (
+    primary: $sinai-primary,
+    accent: $sinai-accent,
+    warn: $sinai-warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: 'Roboto, "Helvetica Neue", sans-serif',
+  ),
+  density: 0,
+));
+
+// Thème sombre (principal, inspiré Docker Desktop)
+$sinai-dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $sinai-primary,
+    accent: $sinai-accent,
+    warn: $sinai-warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: 'Roboto, "Helvetica Neue", sans-serif',
+  ),
+  density: 0,
+));
+
+// Application du thème sombre par défaut
+@include mat.core();
+@include mat.all-component-themes($sinai-dark-theme);
+
+// Variables CSS personnalisées pour notre application
+:root {
+  // Couleurs de fond
+  --primary-background: #0f1218;
+  --secondary-background: #1e2433;
+  --panel-background: #24303f;
+  --hover-background: rgba(255, 255, 255, 0.05);
+
+  // Couleurs de texte
+  --text-primary: #ffffff;
+  --text-secondary: #8c9cb0;
+  --text-disabled: #5b6779;
+
+  // Couleurs d'accentuation
+  --accent-blue: #0db7ed;
+  --accent-green: #4ecca3;
+  --warning-color: #f6c23e;
+  --danger-color: #e74a3b;
+  --info-color: #36b9cc;
+  --success-color: #1cc88a;
+
+  // Espacement
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  // Dimensions
+  --sidebar-width: 240px;
+  --header-height: 60px;
+  --border-radius: 4px;
+
+  // Ombres
+  --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  
+  // Transitions
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+// Styles globaux
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: var(--primary-background);
+  color: var(--text-primary);
+  line-height: 1.5;
+  font-size: 14px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Classes d'utilitaires
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-accent { color: var(--accent-blue); }
+.text-success { color: var(--success-color); }
+.text-warning { color: var(--warning-color); }
+.text-danger { color: var(--danger-color); }
+.text-info { color: var(--info-color); }
+
+.bg-panel { background-color: var(--panel-background); }
+.bg-primary { background-color: var(--primary-background); }
+.bg-secondary { background-color: var(--secondary-background); }
+
+// Style des cartes
+.card {
+  background-color: var(--panel-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+// Style des tableaux
+table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  th {
+    text-align: left;
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  
+  td {
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  tr:hover {
+    background-color: var(--hover-background);
+  }
+}
+
+// Status indicators
+.status-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: var(--space-xs);
+  
+  &.ok { background-color: var(--success-color); }
+  &.error { background-color: var(--danger-color); }
+  &.warning { background-color: var(--warning-color); }
+  &.disabled { background-color: var(--text-disabled); }
+  &.unknown { background-color: var(--text-secondary); }
+}
+
+// Customisation de quelques composants Material
+.mat-mdc-snack-bar-container {
+  &.success-snackbar {
+    --mdc-snackbar-container-color: var(--success-color);
+    --mat-mdc-snack-bar-button-color: white;
+    --mdc-snackbar-supporting-text-color: white;
+  }
+  
+  &.error-snackbar {
+    --mdc-snackbar-container-color: var(--danger-color);
+    --mat-mdc-snack-bar-button-color: white;
+    --mdc-snackbar-supporting-text-color: white;
+  }
+}
+
+// Customisation des scrollbars pour un look Docker Desktop
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--primary-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
