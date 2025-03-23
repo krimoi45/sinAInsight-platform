@@ -1,0 +1,208 @@
+// Définition des sources de données
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// Générateur de client Prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Modèles basés sur les collections existantes
+
+model Client {
+  id      String     @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  code    String
+  groups  Group[]
+  resources Resource[]
+
+  @@map("client")
+}
+
+model Group {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  clientName  String   @map("client_name")
+  parentRef   String?  @map("parent_ref")
+  clientRef   String   @map("client_ref") @db.ObjectId
+  process     String?
+  level       Int
+  display     Boolean
+  client      Client   @relation(fields: [clientRef], references: [id])
+
+  @@map("group")
+}
+
+model Resource {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  clientRef         String    @map("client_ref") @db.ObjectId
+  clientName        String    @map("client_name")
+  clientCode        String    @map("client_code")
+  name              String
+  alias             String?
+  probe             String?
+  cycle             Int
+  validityPeriod    String?   @map("validity_period")
+  url               String?
+  scenarioContent   String?   @map("scenario_content")
+  scenarioName      String?   @map("scenario_name")
+  scenarioExt       String?   @map("scenario_ext")
+  scenarioNbretry   Int?      @map("scenario_nbretry")
+  scenarioTimeout   Int?      @map("scenario_timeout")
+  poolName          String?   @map("pool_name")
+  process           String?
+  applicationSource String?   @map("application_source")
+  tz                String?
+  queueName         String?   @map("queue_name")
+  indicatorGroupRef String?   @map("indicator_group_ref")
+  arborescence      String?
+  prevLevel         Int?      @map("prev_level")
+  level             Int?
+  reason            String?
+  scenarioOccur     Int?      @map("scenario_occur")
+  scenarioLog       String?   @map("scenario_log")
+  dontcheck         Int?
+  nextcheck         Int?
+  lastControl       Float?    @map("last_control")
+  lastChange        Int?      @map("last_change")
+  diffCycle         Int?      @map("diff_cycle")
+  lockHostname      String?   @map("lock.hostname")
+  lockPseudoRandom  String?   @map("lock.pseudoRandom")
+  jobId             String?   @map("job_id")
+  elapsed           Float?
+  scenarioHtml      String?   @map("scenario_html")
+  scenarioImg       String?   @map("scenario_img")
+  client            Client    @relation(fields: [clientRef], references: [id])
+
+  @@map("resource")
+}
+
+model ResourceWatcher {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  data  String
+
+  @@map("resource_watcher")
+}
+
+model Session {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  start           Int
+  end             Int
+  tz              String
+  stopped         Int
+  stopPending     Boolean  @map("stop_pending")
+  nextcheckTimeout Int     @map("nextcheck_timeout")
+
+  @@map("session")
+}
+
+model IhmLock {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  lockId        String  @map("lock_id")
+  name          String
+  timeStamp     Int     @map("time_stamp")
+  lockHostname  String  @map("lock.hostname")
+  lockPseudoRandom String @map("lock.pseudoRandom")
+
+  @@map("sina_ihm_lock")
+}
+
+// Modèles supplémentaires pour SinAInsight
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  name      String
+  role      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Alert {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  message     String
+  severity    String
+  resourceId  String?  @db.ObjectId
+  resourceName String?
+  clientName  String?
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  acknowledgedBy String?
+  acknowledgedAt DateTime?
+
+  @@map("alerts")
+}
+
+model Screenshot {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  resourceId  String   @db.ObjectId
+  resourceName String
+  stepName    String?
+  path        String
+  timestamp   DateTime @default(now())
+  status      String?
+  metadata    Json?
+
+  @@map("screenshots")
+}
+
+model Log {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  resourceId  String?  @db.ObjectId
+  resourceName String?
+  level       String
+  message     String
+  timestamp   DateTime @default(now())
+  metadata    Json?
+
+  @@map("logs")
+}
+
+model Probe {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  hostname    String
+  status      String
+  lastSeen    DateTime
+  version     String?
+  capabilities String[]
+  metadata    Json?
+
+  @@map("probes")
+}
+
+model ProbePool {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  probeIds    String[] @db.ObjectId
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("probe_pools")
+}
+
+model Scheduler {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  resourceIds String[] @db.ObjectId
+  cronExpression String
+  status      String
+  lastRun     DateTime?
+  nextRun     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("schedulers")
+}
