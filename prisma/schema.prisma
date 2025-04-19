@@ -1,20 +1,33 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/client"
-  engineType = "library"
-  previewFeatures = ["driverAdapters"]
+  previewFeatures = ["mongodb"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("MONGODB_URL")
 }
 
-// Exemple de modèle, à adapter selon votre projet
+// Exemple de modèle pour MongoDB
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  email      String   @unique
+  name       String?
+  role       String   @default("user")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@map("users")
+}
+
+model MonitoringData {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  deviceId   String
+  metric     String
+  value      Float
+  timestamp  DateTime @default(now())
+  
+  @@map("monitoring_data")
+  @@index([deviceId, timestamp])
 }
