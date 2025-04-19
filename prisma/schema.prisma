@@ -6,28 +6,111 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url      = env("MONGODB_URL")
+  url      = env("DATABASE_URL")
 }
 
-// Exemple de modèle pour MongoDB
-model User {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  email      String   @unique
-  name       String?
-  role       String   @default("user")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  
-  @@map("users")
+// Modèle de monitoring amélioré
+model MonitoringMetric {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  resourceId   String   @db.ObjectId
+  resourceName String
+  metricType   String   // ex: CPU, Memory, Network
+  value        Float
+  unit         String   // ex: %, MB, Mbps
+  timestamp    DateTime @default(now())
+  probeId      String?  @db.ObjectId
+  status       String?  // OK, WARNING, CRITICAL
+
+  @@index([resourceId, timestamp])
+  @@index([metricType, timestamp])
+  @@map("monitoring_metrics")
 }
 
-model MonitoringData {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  deviceId   String
-  metric     String
-  value      Float
-  timestamp  DateTime @default(now())
+// Modèle de logs applicatifs amélioré
+model ApplicationLog {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  serviceName  String
+  logLevel     String   // DEBUG, INFO, WARN, ERROR, CRITICAL
+  message      String
+  timestamp    DateTime @default(now())
+  context      Json?
+  stackTrace   String?
+  resourceId   String?  @db.ObjectId
+  probeId      String?  @db.ObjectId
+
+  @@index([serviceName, timestamp])
+  @@index([logLevel, timestamp])
+  @@map("application_logs")
+}
+
+// Modèle de performance des ressources
+model ResourcePerformance {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  resourceId     String   @db.ObjectId
+  resourceName   String
+  performanceKey String   // ex: responseTime, throughput
+  value          Float
+  unit           String   // ex: ms, req/sec
+  timestamp      DateTime @default(now())
   
-  @@map("monitoring_data")
-  @@index([deviceId, timestamp])
+  @@index([resourceId, performanceKey, timestamp])
+  @@map("resource_performance")
+}
+
+// Modèle de trace de transaction
+model TransactionTrace {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  traceId       String   @unique
+  serviceName   String
+  operationName String
+  duration      Float    // en millisecondes
+  startTime     DateTime
+  endTime       DateTime
+  status        String   // SUCCESS, FAILED
+  errorMessage  String?
+  metadata      Json?
+
+  @@index([serviceName, startTime])
+  @@index([status, duration])
+  @@map("transaction_traces")
+}
+
+// Conservation des modèles existants importants
+model probes {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  hostname  String
+  ip        String
+  isActive  Boolean
+  lastPing  DateTime @db.Date
+  location  String
+  name      String
+  resources String[]
+  status    String
+  type      String
+  version   String
+}
+
+model resource {
+  id                  String               @id @default(auto()) @map("_id") @db.ObjectId
+  alias               String
+  application_source  String
+  arborescence        String
+  client_code         String
+  client_name         String
+  client_ref          String               @db.ObjectId
+  cycle               Int
+  diff_cycle          Int
+  // ... (autres champs existants)
+}
+
+model users {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @db.Date
+  email     String   @unique
+  isActive  Boolean
+  lastLogin Json?
+  name      String
+  password  String
+  role      String
+  updatedAt DateTime @db.Date
 }
